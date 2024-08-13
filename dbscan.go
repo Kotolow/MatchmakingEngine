@@ -1,6 +1,8 @@
 package main
 
-import "sort"
+import (
+	"sort"
+)
 
 func RangeQuery(queue *Queue, player Player, radius float64) []Player {
 	var neighbours []Player
@@ -16,31 +18,17 @@ func RangeQuery(queue *Queue, player Player, radius float64) []Player {
 	return neighbours
 }
 
-func DBSCAN(queue *Queue, radius float64, notFinished []Group) []Group {
-	for gIndex, group := range notFinished {
-		sort.Sort(byEDist{queue.Players, group.Players[0]})
-		for index, player := range queue.Players {
-			if euclideanDistance(player, group.Players[0]) <= radius {
-				group.Players = append(group.Players, player)
-			} else {
-				if group.IsFull() {
-					queue.Players = queue.Players[index+1:]
-					groupOutput(groupId, group)
-					groupId++
-					notFinished = append(notFinished[:gIndex], notFinished[gIndex+1:]...) //убираем сформированную группу
-				}
-				break
-			}
-		}
-	}
+func DBSCAN(queue *Queue, radius float64) {
 	for len(queue.Players) > 0 {
 		neighbours := Group{RangeQuery(queue, queue.Pop(), radius)}
 		if neighbours.IsFull() {
+			groupId := redisGetId()
 			groupOutput(groupId, neighbours)
-			groupId++
+			redisSetId(groupId + 1)
 		} else {
-			notFinished = append(notFinished, neighbours)
+			for _, player := range neighbours.Players {
+				go redisPush(player, true)
+			}
 		}
 	}
-	return notFinished
 }

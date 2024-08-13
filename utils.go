@@ -23,8 +23,8 @@ func groupOutput(groupId int, group Group) {
 	maxSkill = group.Players[0].Skill
 	minLatency = group.Players[0].Latency
 	maxLatency = group.Players[0].Latency
-	minTimeSpent = time.Since(group.Players[0].creationTs)
-	maxTimeSpent = time.Since(group.Players[0].creationTs)
+	minTimeSpent = time.Since(group.Players[0].CreationTs)
+	maxTimeSpent = time.Since(group.Players[0].CreationTs)
 
 	for _, player := range group.Players {
 		if player.Skill < minSkill {
@@ -43,7 +43,7 @@ func groupOutput(groupId int, group Group) {
 		}
 		totalLatency += player.Latency
 
-		timeSpent := time.Since(player.creationTs)
+		timeSpent := time.Since(player.CreationTs)
 		if timeSpent < minTimeSpent {
 			minTimeSpent = timeSpent
 		}

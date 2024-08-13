@@ -14,13 +14,6 @@ func (q *Queue) Pop() Player {
 	return player
 }
 
-func (q *Queue) PopByIndex(index int) Player {
-	player := q.Players[index]
-	q.Players = append(q.Players[:index], q.Players[index+1:]...)
-	return player
-}
-
-// Сортировка элементов по евклидовому расстоянию
 type byEDist struct {
 	players    []Player
 	centeredEl Player
