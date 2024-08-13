@@ -10,6 +10,10 @@ func getRadius(sDiff, lDiff float64) float64 {
 	return math.Sqrt(math.Pow(sDiff, 2) + math.Pow(lDiff, 2))
 }
 
+func euclideanDistance(p1, p2 Player) float64 {
+	return math.Sqrt(math.Pow(p1.Skill-p2.Skill, 2) + math.Pow(p1.Latency-p2.Latency, 2))
+}
+
 func groupOutput(groupId int, group Group) {
 	var minSkill, maxSkill, totalSkill float64
 	var minLatency, maxLatency, totalLatency float64
