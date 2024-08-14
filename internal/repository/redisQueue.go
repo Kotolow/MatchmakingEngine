@@ -1,6 +1,8 @@
-package main
+package repository
 
 import (
+	"MatchmakingEngine/internal/config"
+	"MatchmakingEngine/internal/models"
 	"context"
 	"encoding/json"
 	"errors"
@@ -11,11 +13,11 @@ import (
 
 var ctx = context.Background()
 
-func redisPush(player Player, reversed bool) {
+func RedisPush(player models.Player, reversed bool) {
 	client := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "",
-		DB:       0,
+		Addr:     config.AppConfig.RedisAddr,
+		Password: config.AppConfig.RedisPW,
+		DB:       config.AppConfig.RedisDB,
 	})
 	defer client.Close()
 	if reversed {
@@ -32,7 +34,7 @@ func redisPush(player Player, reversed bool) {
 
 }
 
-func redisPop(client *redis.Client, player *Player) {
+func redisPop(client *redis.Client, player *models.Player) {
 	result, _ := client.LPop(ctx, "queue").Result()
 	err := json.Unmarshal([]byte(result), player)
 	if err != nil {
@@ -40,16 +42,16 @@ func redisPop(client *redis.Client, player *Player) {
 	}
 }
 
-func redisQueue() Queue {
+func RedisQueue() models.Queue {
 	client := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "",
-		DB:       0,
+		Addr:     config.AppConfig.RedisAddr,
+		Password: config.AppConfig.RedisPW,
+		DB:       config.AppConfig.RedisDB,
 	})
 	defer client.Close()
 
-	var queue Queue
-	var player Player
+	var queue models.Queue
+	var player models.Player
 
 	queueLen := redisQueueLen(client)
 	for i := 0; i < queueLen; i++ {
@@ -65,17 +67,17 @@ func redisQueueLen(client *redis.Client) int {
 	return int(result)
 }
 
-func redisGetId() int {
+func RedisGetId() int {
 	client := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "",
-		DB:       0,
+		Addr:     config.AppConfig.RedisAddr,
+		Password: config.AppConfig.RedisPW,
+		DB:       config.AppConfig.RedisDB,
 	})
 	defer client.Close()
 
 	groupId, err := client.Get(ctx, "groupId").Result()
 	if errors.Is(err, redis.Nil) {
-		redisSetId(1)
+		RedisSetId(1)
 		return 1
 	} else if err != nil {
 		fmt.Printf("error getting groupId: %w", err)
@@ -89,11 +91,11 @@ func redisGetId() int {
 	return 0
 }
 
-func redisSetId(value int) {
+func RedisSetId(value int) {
 	client := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "",
-		DB:       0,
+		Addr:     config.AppConfig.RedisAddr,
+		Password: config.AppConfig.RedisPW,
+		DB:       config.AppConfig.RedisDB,
 	})
 	defer client.Close()
 

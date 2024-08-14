@@ -1,20 +1,44 @@
-package main
+package models
 
 import (
+	"MatchmakingEngine/internal/config"
+	"encoding/json"
 	"fmt"
 	"math"
 	"time"
 )
 
-func getRadius(sDiff, lDiff float64) float64 {
-	return math.Sqrt(math.Pow(sDiff, 2) + math.Pow(lDiff, 2))
+type Player struct {
+	Name       string    `json:"name"`
+	Skill      float64   `json:"skill"`
+	Latency    float64   `json:"latency"`
+	CreationTs time.Time `json:"ts"`
 }
 
-func euclideanDistance(p1, p2 Player) float64 {
-	return math.Sqrt(math.Pow(p1.Skill-p2.Skill, 2) + math.Pow(p1.Latency-p2.Latency, 2))
+func (p Player) MarshalBinary() ([]byte, error) {
+	return json.Marshal(p)
 }
 
-func groupOutput(groupId int, group Group) {
+func (p Player) UnmarshalBinary(data []byte) error {
+	return json.Unmarshal(data, &p)
+}
+
+func (p Player) EuclideanDistance(p2 Player) float64 {
+	return math.Sqrt(math.Pow(p.Skill-p2.Skill, 2) + math.Pow(p.Latency-p2.Latency, 2))
+}
+
+type Group struct {
+	Players []Player
+}
+
+func (group *Group) IsFull() bool {
+	if len(group.Players) == config.AppConfig.GroupSize {
+		return true
+	}
+	return false
+}
+
+func (group *Group) GroupOutput(groupId int) {
 	var minSkill, maxSkill, totalSkill float64
 	var minLatency, maxLatency, totalLatency float64
 	var minTimeSpent, maxTimeSpent, totalTimeSpent time.Duration
