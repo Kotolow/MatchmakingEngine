@@ -23,12 +23,12 @@ func RedisPush(player models.Player, reversed bool) {
 	if reversed {
 		_, err := client.LPush(ctx, "queue", player).Result()
 		if err != nil {
-			fmt.Printf("error pushing to queue: %w", err)
+			fmt.Printf("error pushing to queue: %v", err)
 		}
 	} else {
 		_, err := client.RPush(ctx, "queue", player).Result()
 		if err != nil {
-			fmt.Printf("error pushing to queue: %w", err)
+			fmt.Printf("error pushing to queue: %v", err)
 		}
 	}
 
@@ -38,7 +38,7 @@ func redisPop(client *redis.Client, player *models.Player) {
 	result, _ := client.LPop(ctx, "queue").Result()
 	err := json.Unmarshal([]byte(result), player)
 	if err != nil {
-		fmt.Printf("error unmarshalling player: %w", err)
+		fmt.Printf("error unmarshalling player: %v", err)
 	}
 }
 
@@ -80,11 +80,11 @@ func RedisGetId() int {
 		RedisSetId(1)
 		return 1
 	} else if err != nil {
-		fmt.Printf("error getting groupId: %w", err)
+		fmt.Printf("error getting groupId: %v", err)
 	} else {
 		id, err := strconv.Atoi(groupId)
 		if err != nil {
-			fmt.Printf("error converting groupId: %w", err)
+			fmt.Printf("error converting groupId: %v", err)
 		}
 		return id
 	}
@@ -101,6 +101,6 @@ func RedisSetId(value int) {
 
 	err := client.Set(ctx, "groupId", value, 0).Err()
 	if err != nil {
-		fmt.Printf("error setting groupId: %w", err)
+		fmt.Printf("error setting groupId: %v", err)
 	}
 }

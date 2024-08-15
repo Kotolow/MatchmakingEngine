@@ -21,7 +21,7 @@ func ConfigInit() {
 	var err error
 	AppConfig, err = LoadConfig(".")
 	if err != nil {
-		fmt.Printf("error loading config: %w", err)
+		fmt.Printf("error loading config: %v", err)
 	}
 }
 
