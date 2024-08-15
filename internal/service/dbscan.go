@@ -13,6 +13,7 @@ func RangeQuery(queue *models.Queue, player models.Player, radius float64) []mod
 	if len(queue.Players) == 0 {
 		return neighbours
 	}
+	sort.Sort(models.ByEDist{Players: queue.Players, CenteredEl: player})
 	for len(queue.Players) > 0 && queue.Players[0].EuclideanDistance(player) <= radius && len(neighbours) < config.AppConfig.GroupSize {
 		sort.Sort(models.ByEDist{Players: queue.Players, CenteredEl: queue.Players[0]})
 		el := queue.Pop()

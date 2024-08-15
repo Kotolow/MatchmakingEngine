@@ -16,7 +16,7 @@ type Player struct {
 }
 
 func sendRequest(player Player) error {
-	url := "http://localhost:8080/users"
+	url := "http://172.20.0.1:8080/users"
 
 	jsonData, err := json.Marshal(player)
 	if err != nil {

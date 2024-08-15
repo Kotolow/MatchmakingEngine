@@ -19,7 +19,7 @@ var AppConfig Config
 
 func ConfigInit() {
 	var err error
-	AppConfig, err = LoadConfig("../..")
+	AppConfig, err = LoadConfig(".")
 	if err != nil {
 		fmt.Printf("error loading config: %w", err)
 	}

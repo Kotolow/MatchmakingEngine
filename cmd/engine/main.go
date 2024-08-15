@@ -13,7 +13,11 @@ import (
 func main() {
 	config.ConfigInit()
 
-	r := gin.Default()
+	r := gin.New()
+	r.Use(
+		gin.LoggerWithWriter(gin.DefaultWriter, "/users"),
+		gin.Recovery(),
+	)
 	r.POST("/users", v1.UsersHandler)
 	go func() {
 		err := r.Run(config.AppConfig.Port)
